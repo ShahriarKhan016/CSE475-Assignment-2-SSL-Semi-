@@ -895,9 +895,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👤 Author
 
-**Your Name**  
+**Shahriar Khan**  
+**Khalid Mahmud Joy** 
+**Tanvir Rahman** 
+**Rifah Tamanna** 
 East West University  
-CSE 475 - Pattern Recognition and Neural Networks  
+CSE 475 - Machine Learning
 December 2025
 
 ---
