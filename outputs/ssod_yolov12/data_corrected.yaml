@@ -1,0 +1,7 @@
+path: /kaggle/input/brain-mri-split-dataset-v2/brain-mri-split-dataset-v2/dataset
+train: train/images
+val: valid/images
+test: test/images
+
+names: ['cct', 'ifc', 'uas']
+nc: 3

@@ -1,0 +1,8 @@
+names:
+- cct
+- ifc
+- uas
+nc: 3
+path: /kaggle/working/ssod_yolov12/ssl_data
+train: labeled/images
+val: validation/images
