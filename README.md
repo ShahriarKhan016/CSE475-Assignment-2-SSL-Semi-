@@ -11,6 +11,63 @@
 
 ---
 
+## 📓 Kaggle Notebooks
+
+<div align="center">
+
+### 🚀 Complete Pipeline - Click to View Interactive Notebooks
+
+<table>
+  <tr>
+    <th>Step</th>
+    <th>Notebook</th>
+    <th>Description</th>
+    <th>Link</th>
+  </tr>
+  <tr>
+    <td align="center">1️⃣</td>
+    <td><b>Data Preparation & EDA</b></td>
+    <td>Dataset analysis, preprocessing, and exploration</td>
+    <td><a href="https://www.kaggle.com/code/turjo410/01-data-preparation-eda"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a></td>
+  </tr>
+  <tr>
+    <td align="center">2️⃣</td>
+    <td><b>SSOD YOLO Pseudo-labeling</b></td>
+    <td>Semi-supervised object detection with pseudo-labels</td>
+    <td><a href="https://www.kaggle.com/code/turjo410/02-ssod-yolo-pseudolabel-final3acc34ed50"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a></td>
+  </tr>
+  <tr>
+    <td align="center">3️⃣</td>
+    <td><b>SimCLR Pretraining</b></td>
+    <td>Self-supervised contrastive learning pretraining</td>
+    <td><a href="https://www.kaggle.com/code/turjo410/03-1-simclr-pretrainingdcec1c9968"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a></td>
+  </tr>
+  <tr>
+    <td align="center">4️⃣</td>
+    <td><b>SimCLR Fine-tuning</b></td>
+    <td>Transfer learning and YOLO integration</td>
+    <td><a href="https://www.kaggle.com/code/turjo410/03-2-simclr-finetuning1a4c18f8e5"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a></td>
+  </tr>
+  <tr>
+    <td align="center">5️⃣</td>
+    <td><b>DINOv3 Feature Extraction</b></td>
+    <td>Self-supervised vision transformer features</td>
+    <td><a href="https://www.kaggle.com/code/archariox/04-1-dinov3-featureextraction"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a></td>
+  </tr>
+  <tr>
+    <td align="center">6️⃣</td>
+    <td><b>DINOv3 Fine-tuning</b></td>
+    <td>Classifier training and YOLO detection</td>
+    <td><a href="https://www.kaggle.com/code/archariox/04-2-dinov3-finetuning"><img src="https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white" alt="Kaggle"></a></td>
+  </tr>
+</table>
+
+**📌 Note**: All notebooks are fully executable on Kaggle with GPU acceleration enabled.
+
+</div>
+
+---
+
 ## 📋 Table of Contents
 
 - [Project Overview](#-project-overview)
