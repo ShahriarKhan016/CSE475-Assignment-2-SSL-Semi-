@@ -115,10 +115,7 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-# Large model files (keep in outputs but exclude from git if too large)
-# Uncomment if needed:
-# *.pt
-# *.pth
-# *.npy
-# Large model files (>100MB)
-outputs/03_1_SimCLR_Pretraining/simclr_best_checkpoint.pth
+# Large model files (keep in outputs but exclude from git)
+*.pt
+*.pth
+*.npy
