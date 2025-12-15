@@ -235,6 +235,13 @@ This project implements **Semi-Supervised Learning (SSL)** and **Self-Supervised
 ![DINOv3 Accuracy Comparison](outputs/dino_finetuning/dinov3_accuracy_comparison.png)
 *Comparison of Linear, k-NN, and MLP classifiers*
 
+#### YOLO Object Detection Integration
+![DINOv3 YOLO Predictions](outputs/dino_finetuning/dinov3_yolo_predictions.png)
+*DINOv3 + YOLOv12 detection results with bounding boxes and class counts (94.08% mAP@50)*
+
+![DINOv3 YOLO Analysis](outputs/dino_finetuning/dinov3_yolo_analysis.png)
+*YOLO training curves and confusion matrix - Best performing model*
+
 </div>
 
 ---
