@@ -120,3 +120,5 @@ Thumbs.db
 # *.pt
 # *.pth
 # *.npy
+# Large model files (>100MB)
+outputs/03_1_SimCLR_Pretraining/simclr_best_checkpoint.pth
