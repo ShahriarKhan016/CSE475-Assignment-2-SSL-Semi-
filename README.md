@@ -5,7 +5,7 @@
 [![YOLO](https://img.shields.io/badge/YOLO-v12-green.svg)](https://github.com/ultralytics/ultralytics)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **Course**: CSE 475 - Pattern Recognition and Neural Networks  
+> **Course**: CSE 475 - Machine Learning 
 > **Assignment**: Lab Assignment 02  
 > **Topic**: Semi-Supervised & Self-Supervised Learning for Medical Image Analysis
 
@@ -124,36 +124,44 @@ CSE475_Assignment2_SSL/
 │   ├── 03_simclr_theory.md                        # SimCLR theory
 │   └── 04_dinov3_theory.md                        # DINOv3 theory
 │
-├── 📊 results/                                     # All experimental results
-│   ├── 01_eda/                                    # EDA visualizations
-│   ├── 02_ssod/                                   # SSOD results & metrics
-│   ├── 03_simclr/                                 # SimCLR results
-│   │   ├── pretraining/                           # Pretraining outputs
-│   │   └── finetuning/                            # Fine-tuning outputs
-│   └── 04_dinov3/                                 # DINOv3 results
-│       ├── features/                              # Extracted features
-│       └── finetuning/                            # Detection results
-│
-├── 🏋️ weights/                                    # Model weights
-│   ├── simclr_backbone.pth                        # Pretrained SimCLR
-│   ├── simclr_finetuned.pth                       # Fine-tuned SimCLR
-│   ├── dinov3_mlp_best.pth                        # DINOv3 MLP classifier
-│   └── yolo_detectors/                            # YOLO weights
-│       ├── baseline_best.pt                       # Baseline YOLO
-│       ├── ssod_student.pt                        # SSOD student
-│       ├── simclr_yolo_best.pt                    # SimCLR + YOLO
-│       └── dinov3_yolo_best.pt                    # DINOv3 + YOLO
-│
-├── 📈 visualizations/                              # Key visualizations
-│   ├── training_curves/                           # Loss & accuracy plots
-│   ├── confusion_matrices/                        # Per-model confusion
-│   ├── tsne_plots/                                # Feature visualizations
-│   ├── predictions/                               # Sample predictions
-│   └── comparisons/                               # Model comparisons
-│
-└── 🔧 configs/                                     # Configuration files
-    ├── data.yaml                                  # Dataset config
-    └── training_configs/                          # Hyperparameters
+└── 📊 outputs/                                     # All experimental outputs
+    ├── 03_1_SimCLR_Pretraining/                   # SimCLR pretraining results
+    │   ├── *.png                                  # 4 visualization images
+    │   ├── *.pth                                  # 13 model checkpoints
+    │   └── simclr_training_history.csv            # Training metrics
+    │
+    ├── 03_2_SimCLR_Finetuning/                    # SimCLR fine-tuning results
+    │   ├── *.png                                  # 13 visualization images
+    │   ├── full_finetune_best.pth                 # Fine-tuned model
+    │   ├── linear_eval_best.pth                   # Linear eval model
+    │   ├── simclr_finetune_results.csv            # Results CSV
+    │   └── simclr_yolo_detector/                  # YOLO integration
+    │       ├── *.png                              # Detection curves
+    │       ├── weights/best.pt                    # Best YOLO weights
+    │       └── results.csv                        # YOLO metrics
+    │
+    ├── dino_features/                             # DINOv3 feature extraction
+    │   ├── *.png                                  # 5 visualization images
+    │   └── *.npy                                  # Extracted features
+    │
+    ├── dino_finetuning/                           # DINOv3 fine-tuning results
+    │   ├── *.png                                  # 18 visualization images
+    │   ├── dinov3_mlp_best.pth                    # MLP classifier
+    │   └── dinov3_yolo_detector/                  # YOLO integration
+    │       ├── *.png                              # Detection curves
+    │       ├── weights/best.pt                    # Best YOLO weights
+    │       └── results.csv                        # YOLO metrics
+    │
+    └── ssod_yolov12/                              # Semi-supervised detection
+        ├── *.png                                  # 3 visualization images
+        ├── final_results.csv                      # Final metrics
+        ├── baseline_model/                        # Baseline YOLO
+        │   ├── *.png                              # Curves & confusion
+        │   ├── weights/best.pt                    # Baseline weights
+        │   └── results.csv                        # Baseline metrics
+        └── ssl_data/combined/                     # Pseudo-labeled data
+            ├── images/                            # ~1000 images
+            └── labels/                            # Pseudo-labels
 ```
 
 ---
@@ -467,7 +475,112 @@ mAP@50
 
 ---
 
-## 📸 Visualizations
+## 📊 Complete Outputs Directory
+
+All experimental results, trained models, and visualizations are organized in the `outputs/` folder:
+
+### 📁 SimCLR Pretraining (`outputs/03_1_SimCLR_Pretraining/`)
+
+**Visualizations (4 images):**
+- `simclr_training_curves.png` - Loss progression over 100 epochs
+- `simclr_dataset_eda.png` - Data distribution analysis
+- `simclr_feature_visualization.png` - Feature space representation
+- `simclr_augmentation_pairs.png` - Augmentation examples
+
+**Models (13 checkpoints):**
+- `simclr_best_checkpoint.pth` - Best performing checkpoint
+- `simclr_backbone.pth` - Pretrained encoder backbone
+- `simclr_full_model.pth` - Complete model with projection head
+- `simclr_checkpoint_epoch{10,20,...,100}.pth` - Intermediate checkpoints
+
+**Metrics:**
+- `simclr_training_history.csv` - Complete training logs
+
+### 📁 SimCLR Fine-tuning (`outputs/03_2_SimCLR_Finetuning/`)
+
+**Visualizations (13 images):**
+- `simclr_confusion_matrices.png` - Linear eval & full fine-tuning confusion matrices
+- `simclr_per_class_metrics.png` - Per-class precision/recall/F1
+- `simclr_prediction_confidence.png` - Confidence distribution
+- `simclr_correct_predictions.png` - Sample correct predictions
+- `simclr_incorrect_predictions.png` - Sample misclassifications
+- `simclr_linear_evaluation_tsne.png` - t-SNE for linear evaluation
+- `simclr_full_fine-tuning_tsne.png` - t-SNE for full fine-tuning
+- `simclr_final_comparison.png` - Model comparison chart
+- `simclr_training_comparison.png` - Training curves comparison
+- YOLO detector curves (BoxF1, BoxP, BoxPR, BoxR, confusion matrices, results)
+
+**Models:**
+- `linear_eval_best.pth` - Linear evaluation model (90.31% accuracy)
+- `full_finetune_best.pth` - Full fine-tuning model
+- `simclr_yolo_detector/weights/best.pt` - Best YOLO weights
+
+**Metrics:**
+- `simclr_finetune_results.csv` - Classification results
+- `simclr_yolo_detector/results.csv` - Detection metrics
+
+### 📁 DINOv3 Features (`outputs/dino_features/`)
+
+**Visualizations (5 images):**
+- `dinov3_dataset_eda.png` - Dataset statistics
+- `dinov3_feature_distributions.png` - Feature distribution analysis
+- `dinov3_tsne_visualization.png` - t-SNE projection
+- `dinov3_pca_visualization.png` - PCA projection
+- `dinov3_combined_visualization.png` - Combined feature analysis
+
+**Extracted Features (.npy files):**
+- `dino_features_train_features.npy` & `dino_features_train_labels.npy`
+- `dino_features_val_features.npy` & `dino_features_val_labels.npy`
+- `dino_features_test_features.npy` & `dino_features_test_labels.npy`
+
+### 📁 DINOv3 Fine-tuning (`outputs/dino_finetuning/`)
+
+**Visualizations (18 images):**
+- `dinov3_confusion_matrices.png` - Classification confusion matrix
+- `dinov3_per_class_metrics.png` - Per-class performance
+- `dinov3_mlp_training_curves.png` - MLP training progression
+- `dinov3_accuracy_comparison.png` - Method comparison (Linear/k-NN/MLP)
+- `dinov3_knn_accuracy.png` - k-NN performance vs k
+- `dinov3_precision_recall_curves.png` - PR curves for all classes
+- `dinov3_roc_curves.png` - ROC curves for all classes
+- `dinov3_test_tsne.png` - t-SNE visualization on test set
+- `dinov3_correct_predictions.png` - Sample correct predictions
+- `dinov3_incorrect_predictions.png` - Sample misclassifications
+- `dinov3_all_predictions_confidence.png` - Prediction confidence distribution
+- `dinov3_feature_eda.png` - Feature analysis
+- `dinov3_yolo_analysis.png` - YOLO detection analysis
+- `dinov3_yolo_predictions.png` - Sample YOLO predictions
+- YOLO detector curves (BoxF1, BoxP, BoxPR, BoxR, confusion matrices, results)
+
+**Models:**
+- `dinov3_mlp_best.pth` - Best MLP classifier (89.45% accuracy)
+- `dinov3_yolo_detector/weights/best.pt` - **Best YOLO detector (94.08% mAP@50)**
+
+**Metrics:**
+- `dinov3_yolo_detector/results.csv` - Complete detection metrics
+
+### 📁 Semi-Supervised Detection (`outputs/ssod_yolov12/`)
+
+**Visualizations (3 images):**
+- `baseline_yolov12_predictions_counts.png` - Prediction distribution
+- `pseudo_label_analysis.png` - Pseudo-label quality analysis
+- `model_comparison.png` - Teacher vs Student comparison
+- Baseline model curves (BoxF1, BoxP, BoxPR, BoxR, confusion matrices, results)
+
+**Models:**
+- `baseline_model/weights/best.pt` - Baseline model (93.04% mAP@50)
+
+**Metrics:**
+- `final_results.csv` - Complete SSOD experiment results
+- `baseline_model/results.csv` - Baseline metrics
+
+**Pseudo-labeled Data:**
+- `ssl_data/combined/images/` - ~1000 pseudo-labeled images
+- `ssl_data/combined/labels/` - Corresponding pseudo-labels
+
+---
+
+## 📸 Key Visualizations
 
 ### Feature Space Visualization (t-SNE)
 
@@ -493,6 +606,12 @@ The t-SNE plots show clear cluster separation after self-supervised pretraining:
 │     Image 1       Image 2             │
 └────────────────────────────────────────┘
 ```
+
+**Summary of All Outputs:**
+- **Total PNG Visualizations**: 56 images
+- **Total CSV Metrics Files**: 7 files
+- **Total Model Weights**: 22 files (.pth and .pt)
+- **Pseudo-labeled Images**: ~1000 images with labels
 
 ---
 
@@ -552,16 +671,38 @@ results[0].show()
 
 ---
 
-## 🏋️ Model Weights
+## 🏋️ Trained Model Weights
 
-| Model | File | Size | Description |
-|-------|------|:----:|-------------|
-| SimCLR Backbone | `simclr_backbone.pth` | ~45 MB | Pretrained ResNet-18 |
-| SimCLR Fine-tuned | `simclr_finetuned.pth` | ~45 MB | Classification model |
-| DINOv3 MLP | `dinov3_mlp_best.pth` | ~5 MB | MLP classifier |
-| YOLO Baseline | `baseline_best.pt` | ~22 MB | 100% labeled data |
-| YOLO SSOD | `ssod_student.pt` | ~22 MB | Pseudo-label trained |
-| YOLO DINOv3 | `dinov3_yolo_best.pt` | ~22 MB | **Best detector** |
+All trained models are located in the `outputs/` directory:
+
+| Model | File Path | Description |
+|-------|-----------|-------------|
+| **SimCLR Backbone** | `outputs/03_1_SimCLR_Pretraining/simclr_backbone.pth` | Pretrained ResNet-18 encoder |
+| **SimCLR Best Checkpoint** | `outputs/03_1_SimCLR_Pretraining/simclr_best_checkpoint.pth` | Best pretraining checkpoint |
+| **SimCLR Full Model** | `outputs/03_1_SimCLR_Pretraining/simclr_full_model.pth` | Complete model with projection |
+| **SimCLR Linear Eval** | `outputs/03_2_SimCLR_Finetuning/linear_eval_best.pth` | Linear evaluation model |
+| **SimCLR Fine-tuned** | `outputs/03_2_SimCLR_Finetuning/full_finetune_best.pth` | Full fine-tuning model (90.31% acc) |
+| **SimCLR+YOLO** | `outputs/03_2_SimCLR_Finetuning/simclr_yolo_detector/weights/best.pt` | SimCLR-initialized YOLO |
+| **DINOv3 MLP** | `outputs/dino_finetuning/dinov3_mlp_best.pth` | MLP classifier (89.45% acc) |
+| **DINOv3+YOLO** | `outputs/dino_finetuning/dinov3_yolo_detector/weights/best.pt` | **Best detector (94.08% mAP@50)** |
+| **YOLO Baseline** | `outputs/ssod_yolov12/baseline_model/weights/best.pt` | Baseline YOLO (93.04% mAP@50) |
+
+### Quick Model Loading
+
+```python
+import torch
+from ultralytics import YOLO
+
+# Load SimCLR backbone
+simclr_backbone = torch.load('outputs/03_1_SimCLR_Pretraining/simclr_backbone.pth')
+
+# Load best object detector
+dinov3_yolo = YOLO('outputs/dino_finetuning/dinov3_yolo_detector/weights/best.pt')
+
+# Run inference
+results = dinov3_yolo('path/to/brain_mri.jpg')
+results[0].show()
+```
 
 ---
 
