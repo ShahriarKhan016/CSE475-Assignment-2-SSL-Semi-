@@ -149,6 +149,13 @@ This project implements **Semi-Supervised Learning (SSL)** and **Self-Supervised
 ![SimCLR Confusion Matrix](outputs/03_2_SimCLR_Finetuning/simclr_confusion_matrices.png)
 *Confusion matrices: Linear Evaluation (left) vs Full Fine-tuning (right)*
 
+#### YOLO Object Detection Integration
+![SimCLR YOLO Predictions](outputs/03_2_SimCLR_Finetuning/simclr_yolo_predictions.png)
+*SimCLR + YOLOv12 detection results with bounding boxes and class counts*
+
+![SimCLR YOLO Analysis](outputs/03_2_SimCLR_Finetuning/simclr_yolo_analysis.png)
+*YOLO training curves and confusion matrix analysis*
+
 </div>
 
 ---

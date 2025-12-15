@@ -17,7 +17,7 @@
 | ✅ Theory & Method Details | ✓ Complete | `theory/` folder (4 markdown files) |
 | ✅ Training Logs | ✓ Complete | CSV files in each output folder |
 | ✅ mAP@0.5 Metrics | ✓ Complete | All `results.csv` files |
-| ✅ Visualizations | ✓ Complete | 56 PNG images across all folders |
+| ✅ Visualizations | ✓ Complete | 58 PNG images across all folders ⬆️ UPDATED (+2) |
 | ✅ Performance Comparison Table | ✓ Complete | `README.md` (lines 43-96) |
 | ✅ Discussion | ✓ Complete | In notebooks and README |
 | ✅ Trained Models | ✓ Complete | 22 model files (.pth, .pt) |
@@ -26,7 +26,7 @@
 
 ## 📁 Complete File Inventory
 
-### 📊 Visualization Images (56 total)
+### 📊 Visualization Images (58 total) ⬆️ UPDATED
 
 #### SimCLR Pretraining (4 images)
 ```
@@ -37,7 +37,7 @@ outputs/03_1_SimCLR_Pretraining/
 └── simclr_augmentation_pairs.png       ✓
 ```
 
-#### SimCLR Fine-tuning (13 images)
+#### SimCLR Fine-tuning (15 images) ⬆️ UPDATED
 ```
 outputs/03_2_SimCLR_Finetuning/
 ├── simclr_confusion_matrices.png       ✓
@@ -49,6 +49,8 @@ outputs/03_2_SimCLR_Finetuning/
 ├── simclr_full_fine-tuning_tsne.png    ✓
 ├── simclr_final_comparison.png         ✓
 ├── simclr_training_comparison.png      ✓
+├── simclr_yolo_predictions.png         ✓  🆕 NEW - YOLO detection with bounding boxes
+├── simclr_yolo_analysis.png            ✓  🆕 NEW - YOLO training curves & confusion matrix
 └── simclr_yolo_detector/
     ├── BoxF1_curve.png                 ✓
     ├── BoxP_curve.png                  ✓
