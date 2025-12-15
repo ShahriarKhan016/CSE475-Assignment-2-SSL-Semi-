@@ -101,6 +101,102 @@ This project implements **Semi-Supervised Learning (SSL)** and **Self-Supervised
 
 ---
 
+## 🎨 Visual Results Gallery
+
+### 🏆 Best Model Performance - DINOv3 + YOLO (94.08% mAP@50)
+
+<div align="center">
+
+#### Detection Results & Confusion Matrix
+![DINOv3 YOLO Results](outputs/dino_finetuning/dinov3_yolo_detector/results.png)
+*Training curves showing excellent convergence: Box loss, Object loss, and mAP metrics*
+
+![DINOv3 Confusion Matrix](outputs/dino_finetuning/dinov3_yolo_detector/confusion_matrix_normalized.png)
+*Normalized confusion matrix showing high accuracy across all three classes*
+
+</div>
+
+---
+
+### 📊 Model Comparison & Analysis
+
+<div align="center">
+
+#### Semi-Supervised Learning Results
+![SSOD Comparison](outputs/ssod_yolov12/model_comparison.png)
+*Teacher vs Student model performance comparison*
+
+![Pseudo-Label Analysis](outputs/ssod_yolov12/pseudo_label_analysis.png)
+*Quality analysis of generated pseudo-labels*
+
+</div>
+
+---
+
+### 🧬 SimCLR Self-Supervised Learning
+
+<div align="center">
+
+#### Training Progress
+![SimCLR Training Curves](outputs/03_1_SimCLR_Pretraining/simclr_training_curves.png)
+*Contrastive loss convergence over 100 epochs*
+
+#### Feature Space Visualization
+![SimCLR t-SNE](outputs/03_2_SimCLR_Finetuning/simclr_full_fine-tuning_tsne.png)
+*t-SNE visualization showing clear class separation after fine-tuning*
+
+#### Classification Performance
+![SimCLR Confusion Matrix](outputs/03_2_SimCLR_Finetuning/simclr_confusion_matrices.png)
+*Confusion matrices: Linear Evaluation (left) vs Full Fine-tuning (right)*
+
+</div>
+
+---
+
+### 🦖 DINOv3 Self-Supervised Learning
+
+<div align="center">
+
+#### Feature Extraction
+![DINOv3 t-SNE](outputs/dino_features/dinov3_tsne_visualization.png)
+*t-SNE projection of DINOv3 features showing natural clustering*
+
+![DINOv3 PCA](outputs/dino_features/dinov3_pca_visualization.png)
+*PCA visualization of high-dimensional DINOv3 features*
+
+#### Classification Results
+![DINOv3 Confusion](outputs/dino_finetuning/dinov3_confusion_matrices.png)
+*MLP classifier confusion matrix (89.45% accuracy)*
+
+![DINOv3 Accuracy Comparison](outputs/dino_finetuning/dinov3_accuracy_comparison.png)
+*Comparison of Linear, k-NN, and MLP classifiers*
+
+</div>
+
+---
+
+### 📈 Performance Metrics Visualization
+
+<div align="center">
+
+#### Precision-Recall & ROC Curves
+![DINOv3 PR Curves](outputs/dino_finetuning/dinov3_precision_recall_curves.png)
+*Precision-Recall curves for all three classes*
+
+![DINOv3 ROC Curves](outputs/dino_finetuning/dinov3_roc_curves.png)
+*ROC curves demonstrating excellent classification performance*
+
+#### YOLO Detection Curves
+![YOLO PR Curve](outputs/dino_finetuning/dinov3_yolo_detector/BoxPR_curve.png)
+*Precision-Recall curve for object detection*
+
+![YOLO F1 Curve](outputs/dino_finetuning/dinov3_yolo_detector/BoxF1_curve.png)
+*F1-Confidence curve showing optimal threshold*
+
+</div>
+
+---
+
 ## 📁 Repository Structure
 
 ```
