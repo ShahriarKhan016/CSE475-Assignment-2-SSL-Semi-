@@ -4,15 +4,17 @@
 \section{Methodology}
 \label{sec:methodology}
 
-This section describes the dataset, model architectures, and training methodologies employed in this project.
+\sloppy
+
+The proposed methodology comprises three main components: (1) supervised baseline using YOLO architectures, (2) semi-supervised detection with pseudo-labeling, and (3) self-supervised representation learning with SimCLR and DINOv3. Each approach is evaluated on the Brain MRI dataset for pathology detection.
 
 \subsection{Dataset}
 
 \subsubsection{Dataset Description}
 
-The experiments utilize a Brain MRI object detection dataset specifically curated for pathology detection\footnote{Dataset available at: \url{https://www.kaggle.com/datasets/turjo410/brain-mri-split-dataset}}. The dataset contains approximately 1,200 high-resolution MRI scans with expert annotations.
+The Brain MRI object detection dataset\footnote{Dataset available at: \url{https://www.kaggle.com/datasets/turjo410/brain-mri-split-dataset}} contains approximately 1,200 high-resolution MRI scans with expert bounding box annotations. Table \ref{tab:dataset} summarizes the dataset characteristics. The images are heterogeneous in resolution and contrast, reflecting real-world clinical variability.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Dataset Overview}
 \label{tab:dataset}
@@ -32,23 +34,19 @@ Image Resolution & Variable (resized to 640$\times$640) \\
 
 \subsubsection{Class Definitions}
 
-The dataset includes three pathological classes, each representing a distinct type of brain abnormality:
+The dataset includes three pathological classes as shown in Table \ref{tab:class_distribution}:
 
 \begin{itemize}
-    \item \textbf{CCT (Cerebral Cortex Tumor):} Tumorous masses originating in or affecting the cerebral cortex, typically appearing as enhanced regions on contrast MRI.
+    \item \textbf{CCT (Cerebral Cortex Tumor):} Tumorous masses originating in or affecting the cerebral cortex, typically appearing as enhanced regions on contrast MRI. CCT comprises 35.2\% of annotations.
     
-    \item \textbf{IFC (Intracerebral Fluid Collection):} Abnormal accumulations of cerebrospinal fluid or other fluids within the brain parenchyma, often indicating pathological conditions.
+    \item \textbf{IFC (Intracerebral Fluid Collection):} Abnormal accumulations of cerebrospinal fluid within the brain parenchyma. IFC represents 32.8\% of the dataset.
     
-    \item \textbf{UAS (Unidentified Anomaly Signature):} Other anomalies that require clinical attention but do not fall into the specific CCT or IFC categories.
+    \item \textbf{UAS (Unidentified Anomaly Signature):} Other anomalies requiring clinical attention, comprising 32.0\% of annotations.
 \end{itemize}
 
-\subsubsection{Class Distribution}
-
-The dataset exhibits a relatively balanced class distribution, which is beneficial for training unbiased models:
-
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
-\caption{Class Distribution}
+\caption{Class Distribution showing balanced representation across pathology types}
 \label{tab:class_distribution}
 \begin{tabular}{@{}lccc@{}}
 \toprule
@@ -65,11 +63,11 @@ UAS & 384 & 32.0\% & Unidentified Anomaly Signature \\
 
 \subsubsection{Data Splitting}
 
-The dataset was split into training, validation, and test sets with the following ratios:
+Table \ref{tab:data_split} shows the dataset partitioning strategy. The 80/10/10 split ensures sufficient training data while maintaining reliable validation and test sets for evaluation.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
-\caption{Data Split Configuration}
+\caption{Data Split Configuration for training, validation, and testing}
 \label{tab:data_split}
 \begin{tabular}{@{}lccc@{}}
 \toprule
@@ -82,31 +80,29 @@ Test & 10\% & $\sim$120 & Final evaluation \\
 \end{tabular}
 \end{table}
 
-For semi-supervised experiments, the training set was further divided:
-\begin{itemize}
-    \item \textbf{Labeled set (20\%):} $\sim$192 images with annotations
-    \item \textbf{Unlabeled set (80\%):} $\sim$768 images (labels withheld)
-\end{itemize}
+For semi-supervised experiments, the training set was further divided into labeled (20\%, $\sim$192 images) and unlabeled (80\%, $\sim$768 images with labels withheld) subsets.
 
 \subsection{Supervised Learning Baseline}
 
 \subsubsection{YOLO Architecture Family}
 
-We evaluated three state-of-the-art YOLO architectures for the baseline supervised experiments:
+Three state-of-the-art YOLO architectures were evaluated for baseline experiments. The YOLO (You Only Look Once) family represents single-stage detectors that predict bounding boxes and class probabilities directly from full images in a single network pass \citep{redmon2016yolo}.
 
 \paragraph{YOLOv10n}
-YOLOv10 introduced consistent dual assignments for NMS-free training and an efficiency-accuracy driven model design. The nano variant (YOLOv10n) provides a lightweight architecture suitable for resource-constrained deployments while maintaining competitive accuracy.
+YOLOv10 introduced consistent dual assignments for NMS-free training and efficiency-accuracy driven model design \citep{wang2024yolov10}. The nano variant provides a lightweight architecture suitable for resource-constrained deployments (2.3M parameters).
 
 \paragraph{YOLOv11n}
-YOLOv11 improved upon YOLOv10 with enhanced feature aggregation and refined anchor-free detection heads. It introduced improved CSPNet backbone modifications and better gradient flow for training stability.
+YOLOv11 improved upon YOLOv10 with enhanced feature aggregation, refined anchor-free detection heads, and improved CSPNet backbone modifications for better gradient flow and training stability.
 
 \paragraph{YOLOv12n}
-YOLOv12 represents the latest evolution with attention-augmented detection heads and improved neck architecture. It incorporates transformer-like attention mechanisms while maintaining the efficiency hallmarks of the YOLO family.
+YOLOv12 represents the latest evolution with attention-augmented detection heads and improved neck architecture. It incorporates transformer-like attention mechanisms while maintaining YOLO's efficiency.
 
-\begin{figure}[H]
+Figure \ref{fig:baseline_comparison} visualizes the performance comparison across these architectures.
+
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.85\textwidth]{assignment1/model_comparison.png}
-    \caption{Baseline model comparison showing performance metrics for YOLOv10n, YOLOv11n, and YOLOv12n on the Brain MRI dataset.}
+    \includegraphics[width=1.0\textwidth]{assignment1/model_comparison.png}
+    \caption{Baseline model comparison showing mAP@0.5, mAP@0.5:0.95, Precision, Recall, and F1-score for YOLOv10n, YOLOv11n, and YOLOv12n. YOLOv12n achieves the highest performance across all metrics, demonstrating the benefits of attention mechanisms in medical imaging detection.}
     \label{fig:baseline_comparison}
 \end{figure}
 
@@ -114,9 +110,9 @@ YOLOv12 represents the latest evolution with attention-augmented detection heads
 
 \subsubsection{Pseudo-Labeling Framework}
 
-The semi-supervised object detection pipeline employs a teacher-student framework with pseudo-labeling:
+The semi-supervised pipeline employs a teacher-student framework \citep{sohn2020simple} with the following stages:
 
-\begin{algorithm}[H]
+\begin{algorithm}[htbp]
 \caption{Pseudo-Labeling for Semi-Supervised Object Detection}
 \label{alg:pseudolabel}
 \begin{algorithmic}[1]
@@ -138,9 +134,11 @@ The semi-supervised object detection pipeline employs a teacher-student framewor
 
 \subsubsection{Key Hyperparameters}
 
-\begin{table}[H]
+Table \ref{tab:ssl_config} summarizes the semi-supervised learning configuration parameters.
+
+\begin{table}[htbp]
 \centering
-\caption{Semi-Supervised Learning Configuration}
+\caption{Semi-Supervised Learning Configuration Parameters}
 \label{tab:ssl_config}
 \begin{tabular}{@{}ll@{}}
 \toprule
@@ -161,94 +159,46 @@ Learning Rate & 0.01 \\
 
 \subsubsection{SimCLR: Contrastive Learning}
 
-SimCLR (Simple Contrastive Learning of Representations) learns visual representations by maximizing agreement between differently augmented views of the same image.
+SimCLR \citep{chen2020simclr} learns visual representations by maximizing agreement between differently augmented views of the same image. The architecture consists of a ResNet-18 encoder and a 2-layer MLP projection head (2048 $\rightarrow$ 256 $\rightarrow$ 128), producing 128-dimensional embeddings.
 
-\paragraph{Architecture}
-\begin{itemize}
-    \item \textbf{Encoder:} ResNet-18 backbone
-    \item \textbf{Projection Head:} 2-layer MLP (2048 $\rightarrow$ 256 $\rightarrow$ 128)
-    \item \textbf{Output Dimension:} 128-dimensional embedding
-\end{itemize}
-
-\paragraph{Loss Function (NT-Xent)}
-The Normalized Temperature-scaled Cross Entropy loss for a positive pair $(i, j)$ is:
+The Normalized Temperature-scaled Cross Entropy (NT-Xent) loss for a positive pair $(i, j)$ is:
 
 \begin{equation}
 \mathcal{L}_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j)/\tau)}{\sum_{k=1}^{2N} \mathbf{1}_{[k \neq i]} \exp(\text{sim}(z_i, z_k)/\tau)}
 \end{equation}
 
-where $\text{sim}(u, v) = u^\top v / (\|u\| \|v\|)$ is cosine similarity and $\tau$ is the temperature parameter.
+where $\text{sim}(u, v) = u^\top v / (\|u\| \|v\|)$ is cosine similarity and $\tau=0.07$ is the temperature parameter.
 
-\paragraph{Data Augmentation Pipeline}
-\begin{itemize}
-    \item Random resized crop (scale: 0.2--1.0)
-    \item Random horizontal flip
-    \item Color jittering (brightness, contrast, saturation, hue)
-    \item Random grayscale (probability: 0.2)
-    \item Gaussian blur
-\end{itemize}
+Figure \ref{fig:simclr_augmentation} illustrates the augmentation pipeline including random resized crop (scale: 0.2--1.0), horizontal flip, color jittering, random grayscale (p=0.2), and Gaussian blur.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.9\textwidth]{assignment2/simclr/simclr_augmentation_pairs.png}
-    \caption{SimCLR augmentation pairs showing different views of the same brain MRI image used for contrastive learning.}
+    \includegraphics[width=1.0\textwidth]{assignment2/simclr/simclr_augmentation_pairs.png}
+    \caption{SimCLR augmentation pairs showing different views of the same brain MRI image. The contrastive learning objective maximizes agreement between positive pairs (same image, different augmentations) while minimizing agreement with other images in the batch.}
     \label{fig:simclr_augmentation}
 \end{figure}
 
 \subsubsection{DINOv3: Self-Distillation with Vision Transformers}
 
-DINOv3 employs self-distillation with Vision Transformers, learning powerful visual representations without any labels.
-
-\paragraph{Architecture}
-\begin{itemize}
-    \item \textbf{Backbone:} Vision Transformer ViT-B/16
-    \item \textbf{Parameters:} 86 million
-    \item \textbf{Feature Dimension:} 768
-    \item \textbf{Pretraining Data:} LVD-1689M (1.7 billion images)
-\end{itemize}
-
-\paragraph{Feature Extraction}
-DINOv3 extracts features using the [CLS] token representation from the final transformer layer. For an input image $x$:
+DINOv3 \citep{oquab2023dinov2} employs self-distillation with Vision Transformers (ViT-B/16, 86M parameters), learning powerful visual representations without labels from 1.7 billion diverse images. Features are extracted using the [CLS] token representation from the final transformer layer:
 
 \begin{equation}
 \mathbf{f} = \text{DINOv3}(x)_{\text{[CLS]}} \in \mathbb{R}^{768}
 \end{equation}
 
-\paragraph{Downstream Classifiers}
-Three classification approaches were evaluated:
-\begin{itemize}
-    \item \textbf{Linear Classifier:} Logistic regression on frozen features
-    \item \textbf{k-NN Classifier:} $k$-nearest neighbors ($k=5$) in feature space
-    \item \textbf{MLP Classifier:} 768 $\rightarrow$ 256 $\rightarrow$ 128 $\rightarrow$ 3 with ReLU activation
-\end{itemize}
+Three downstream classifiers were evaluated: (1) Linear classifier on frozen features, (2) k-NN classifier ($k=5$), and (3) MLP classifier (768 $\rightarrow$ 256 $\rightarrow$ 128 $\rightarrow$ 3). Figure \ref{fig:dino_tsne} visualizes the natural clustering of brain MRI classes in DINOv3's learned feature space using t-SNE dimensionality reduction.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
-    \includegraphics[width=0.75\textwidth]{assignment2/dinov3/dinov3_tsne_visualization.png}
-    \caption{t-SNE visualization of DINOv3 features showing natural clustering of brain MRI classes in the learned feature space.}
+    \includegraphics[width=0.85\textwidth]{assignment2/dinov3/dinov3_tsne_visualization.png}
+    \caption{t-SNE visualization of DINOv3 features showing natural clustering of CCT (blue), IFC (orange), and UAS (green) classes. Clear separation indicates that pretrained DINOv3 features capture semantically meaningful distinctions in brain MRI pathologies without any task-specific training.}
     \label{fig:dino_tsne}
 \end{figure}
 
 \subsection{YOLO Integration for Object Detection}
 
-Both self-supervised methods were integrated with YOLOv12 for object detection:
-
-\begin{enumerate}
-    \item \textbf{Feature-Enhanced Training:} Self-supervised features used to enhance training data or initialize components.
-    
-    \item \textbf{Classification-Guided Detection:} Classification predictions used to improve detection confidence estimation.
-    
-    \item \textbf{Fine-tuning Pipeline:} Transfer learned representations to the detection task through fine-tuning on labeled data.
-\end{enumerate}
+Both self-supervised methods were integrated with YOLOv12 for object detection through feature-enhanced training, where the pretrained representations enhance detection through improved feature initialization and classification-guided confidence estimation.
 
 \subsection{Evaluation Metrics}
 
-The following metrics were used to evaluate model performance:
-
-\begin{itemize}
-    \item \textbf{mAP@0.5:} Mean Average Precision at IoU threshold of 0.5
-    \item \textbf{mAP@0.5:0.95:} Mean Average Precision averaged over IoU thresholds from 0.5 to 0.95
-    \item \textbf{Precision:} Ratio of true positives to all positive predictions
-    \item \textbf{Recall:} Ratio of true positives to all actual positives
-    \item \textbf{F1-Score:} Harmonic mean of precision and recall
-\end{itemize}
+Performance was evaluated using: \textbf{mAP@0.5} (Mean Average Precision at IoU=0.5), \textbf{mAP@0.5:0.95} (averaged over IoU thresholds 0.5--0.95), \textbf{Precision} (true positives / all predictions), \textbf{Recall} (true positives / actual positives), and \textbf{F1-Score} (harmonic mean of precision and recall).

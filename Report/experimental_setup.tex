@@ -4,15 +4,17 @@
 \section{Experimental Setup}
 \label{sec:experimental_setup}
 
-This section details the computational environment, training configurations, and experimental protocols used in this project.
+\sloppy
+
+The experimental framework was designed to enable fair comparison across supervised, semi-supervised, and self-supervised learning paradigms. All experiments used identical data splits and evaluation protocols to ensure consistency.
 
 \subsection{Computational Environment}
 
-All experiments were conducted using cloud-based GPU computing resources:
+Experiments were conducted on Kaggle Notebooks using cloud-based GPU resources. Table \ref{tab:compute_env} summarizes the computational environment specifications.
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
-\caption{Computational Environment}
+\caption{Computational Environment Specifications}
 \label{tab:compute_env}
 \begin{tabular}{@{}ll@{}}
 \toprule
@@ -30,13 +32,13 @@ YOLO Implementation & Ultralytics \\
 
 \subsection{Experiment Groups}
 
-The experiments were organized into three main groups corresponding to the project objectives:
-
 \subsubsection{Experiment Group 1: Supervised Learning Baseline}
 
-\begin{table}[H]
+Table \ref{tab:baseline_config} presents the training configuration for baseline YOLO experiments. All models were trained for 100 epochs with identical hyperparameters to ensure fair comparison.
+
+\begin{table}[htbp]
 \centering
-\caption{Baseline Experiment Configuration}
+\caption{Baseline Experiment Configuration for YOLO models}
 \label{tab:baseline_config}
 \begin{tabular}{@{}llll@{}}
 \toprule
@@ -49,17 +51,11 @@ YOLOv12n & 100 & 16 & 0.01 \\
 \end{tabular}
 \end{table}
 
-\textbf{Data Augmentation} (applied during training):
-\begin{itemize}[noitemsep]
-    \item Mosaic augmentation
-    \item Random HSV shifts
-    \item Random horizontal/vertical flips
-    \item Random scaling and translation
-\end{itemize}
+Data augmentation during training included mosaic augmentation, random HSV shifts, horizontal/vertical flips, and random scaling/translation.
 
 \subsubsection{Experiment Group 2: Semi-Supervised Object Detection}
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{Semi-Supervised Experiment Configuration}
 \label{tab:ssod_config}
@@ -91,7 +87,7 @@ Epochs & 100 \\
 
 \paragraph{SimCLR Pretraining Configuration}
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{SimCLR Pretraining Configuration}
 \label{tab:simclr_pretrain}
@@ -114,7 +110,7 @@ Weight Decay & 1e-4 \\
 
 \paragraph{SimCLR Fine-tuning Configuration}
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{SimCLR Fine-tuning Configuration}
 \label{tab:simclr_finetune}
@@ -134,7 +130,7 @@ Optimizer & SGD & Adam \\
 
 \paragraph{DINOv3 Configuration}
 
-\begin{table}[H]
+\begin{table}[htbp]
 \centering
 \caption{DINOv3 Feature Extraction and Classification}
 \label{tab:dino_config}

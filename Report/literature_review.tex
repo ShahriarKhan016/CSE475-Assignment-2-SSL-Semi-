@@ -4,69 +4,59 @@
 \section{Literature Review}
 \label{sec:literature}
 
-This section reviews the relevant literature on object detection, medical image analysis, semi-supervised learning, and self-supervised learning methods that form the theoretical foundation of this project.
+\sloppy
 
-\subsection{Object Detection for Medical Imaging}
+Deep learning has revolutionized medical image analysis, with object detection methods achieving remarkable success in identifying and localizing pathologies across various imaging modalities. The following subsections examine key advances in object detection architectures, their applications to medical imaging, and emerging paradigms in semi-supervised and self-supervised learning.
 
-Object detection in medical imaging has evolved rapidly with the advent of deep learning. Early approaches relied on handcrafted features combined with traditional machine learning classifiers, but these have been largely superseded by end-to-end deep learning methods \citep{litjens2017survey}.
+\subsection{Object Detection Architectures}
 
-\subsubsection{Region-Based Methods}
-Region-based Convolutional Neural Networks (R-CNN) and their variants introduced a two-stage approach: generating region proposals followed by classification \citep{girshick2014rich}. Fast R-CNN improved efficiency through shared convolutional features \citep{girshick2015fast}, while Faster R-CNN introduced the Region Proposal Network (RPN) for end-to-end training \citep{ren2015faster}. These methods have been successfully applied to medical imaging tasks including lesion detection and tumor localization \citep{yan2018deeplesion}.
+\subsubsection{Evolution of Detection Methods}
+Region-based Convolutional Neural Networks (R-CNN) introduced the two-stage detection paradigm, where region proposals are generated first, followed by classification \citep{girshick2014rich}. Fast R-CNN improved efficiency through shared convolutional features \citep{girshick2015fast}, while Faster R-CNN introduced the Region Proposal Network (RPN) for end-to-end training \citep{ren2015faster}. These methods have been successfully applied to medical imaging tasks including lesion detection in DeepLesion \citep{yan2018deeplesion}.
 
 \subsubsection{Single-Stage Detectors}
-Single-stage detectors eliminate the region proposal stage, directly predicting bounding boxes and class probabilities. YOLO (You Only Look Once) pioneered this approach, framing detection as a regression problem \citep{redmon2016yolo}. Subsequent versions improved accuracy and speed: YOLOv2 introduced batch normalization and anchor boxes \citep{redmon2017yolo9000}, YOLOv3 added multi-scale predictions \citep{redmon2018yolov3}, and YOLOv4-v9 incorporated various architectural improvements \citep{bochkovskiy2020yolov4, wang2024yolov9}.
-
-Recent YOLO variants (YOLOv10, YOLOv11, YOLOv12) have introduced attention mechanisms and improved feature pyramid networks, achieving state-of-the-art performance on standard benchmarks while maintaining real-time inference capabilities \citep{wang2024yolov10}.
+YOLO (You Only Look Once) pioneered single-stage detection, framing detection as a regression problem with unified architecture \citep{redmon2016yolo}. YOLOv2 introduced batch normalization and anchor boxes \citep{redmon2017yolo9000}, YOLOv3 added multi-scale predictions through Feature Pyramid Networks \citep{redmon2018yolov3}, and YOLOv4 incorporated CSPDarknet backbone and PANet neck \citep{bochkovskiy2020yolov4}. Recent versions (YOLOv9-v12) incorporate attention mechanisms and transformer-inspired modules \citep{wang2024yolov9, wang2024yolov10}, achieving state-of-the-art performance while maintaining real-time inference.
 
 \subsubsection{Transformer-Based Detection}
-The DETR (DEtection TRansformer) architecture introduced transformers to object detection, eliminating the need for hand-designed components like anchor boxes \citep{carion2020detr}. Subsequent works improved training efficiency and small object detection performance \citep{zhu2021deformable}.
+DETR (DEtection TRansformer) eliminated hand-designed components like anchor boxes through end-to-end transformer architecture \citep{carion2020detr}. Deformable DETR improved training efficiency and small object detection \citep{zhu2021deformable}.
 
-\subsection{Brain MRI Analysis and Tumor Detection}
+\subsection{Medical Image Analysis with Deep Learning}
 
-Automated analysis of brain MRI has received significant attention due to its clinical importance. Deep learning approaches have demonstrated promising results for brain tumor segmentation \citep{havaei2017brain}, classification \citep{abiwinanda2019brain}, and detection \citep{deepak2019brain}.
+Brain tumor detection and segmentation using deep learning has achieved significant success. Havaei et al. \citep{havaei2017brain} demonstrated CNNs for brain tumor segmentation, while Abiwinanda et al. \citep{abiwinanda2019brain} applied CNNs to brain tumor classification. Deepak and Ameer \citep{deepak2019brain} showed transfer learning effectiveness for brain tumor classification, and Swati et al. \citep{swati2019brain} achieved state-of-the-art results using VGG-based architectures. Litjens et al. \citep{litjens2017survey} provided a comprehensive survey of deep learning in medical image analysis, establishing that transfer learning from ImageNet often outperforms training from scratch on limited medical data \citep{raghu2019transfusion}.
 
-Convolutional Neural Networks have been applied to classify brain tumors into categories such as glioma, meningioma, and pituitary tumors \citep{swati2019brain}. Transfer learning from ImageNet-pretrained models has proven particularly effective for medical imaging tasks with limited data \citep{raghu2019transfusion}.
+\subsection{Semi-Supervised Learning}
 
-\subsection{Semi-Supervised Learning for Object Detection}
-
-Semi-supervised learning addresses the challenge of limited labeled data by leveraging unlabeled samples during training \citep{chapelle2009semi, zhu2009introduction}.
-
-\subsubsection{Pseudo-Labeling}
-Pseudo-labeling generates labels for unlabeled data using model predictions, then retrains the model on the expanded dataset \citep{lee2013pseudo}. For object detection, this involves generating bounding box predictions with confidence thresholds to filter low-quality pseudo-labels \citep{sohn2020simple}.
-
-\subsubsection{Teacher-Student Frameworks}
-Teacher-student frameworks use a teacher model to generate pseudo-labels for training a student model. The Unbiased Teacher method addresses pseudo-label bias in object detection \citep{liu2021unbiased}. STAC (Self-Training with Augmented Consistency) combines pseudo-labeling with strong data augmentation \citep{sohn2020simple}. Soft Teacher relaxes hard pseudo-label assignments through soft weighting schemes \citep{xu2021end}.
-
-\subsubsection{Consistency Regularization}
-Consistency regularization enforces prediction consistency under different perturbations of the same input \citep{sajjadi2016regularization}. FixMatch combines pseudo-labeling with consistency regularization using weak and strong augmentations \citep{sohn2020fixmatch}. These principles have been extended to object detection tasks \citep{jeong2019consistency}.
+Semi-supervised learning addresses limited labeled data by leveraging unlabeled samples \citep{chapelle2009semi, zhu2009introduction}. Pseudo-labeling generates labels for unlabeled data using model predictions, then retrains on the expanded dataset \citep{lee2013pseudo}. For object detection, STAC combines pseudo-labeling with strong augmentation \citep{sohn2020simple}, while Unbiased Teacher addresses pseudo-label bias through focal loss reweighting \citep{liu2021unbiased}. Soft Teacher uses soft weighting schemes for pseudo-labels \citep{xu2021end}. FixMatch demonstrated that consistency regularization with weak-strong augmentation pairs significantly improves SSL performance \citep{sohn2020fixmatch}. Consistency regularization enforces prediction stability under perturbations \citep{sajjadi2016regularization, jeong2019consistency}.
 
 \subsection{Self-Supervised Representation Learning}
 
-Self-supervised learning learns representations from unlabeled data through pretext tasks, enabling effective transfer to downstream tasks \citep{jing2020self, liu2021self}.
+Self-supervised learning learns representations from unlabeled data through pretext tasks \citep{jing2020self, liu2021self}. SimCLR introduced contrastive learning with strong augmentations and learnable projections \citep{chen2020simclr}. MoCo (Momentum Contrast) improved efficiency through momentum-updated encoders \citep{he2020moco, chen2020mocov2}. BYOL demonstrated that negative samples are unnecessary through self-distillation \citep{grill2020byol}, and SimSiam further simplified this approach \citep{chen2021simsiam}.
 
-\subsubsection{Contrastive Learning}
-Contrastive learning learns representations by maximizing agreement between differently augmented views of the same image while minimizing agreement with other images \citep{chen2020simclr}. SimCLR introduced a simple yet effective framework with strong data augmentation and learnable nonlinear projections \citep{chen2020simclr}. MoCo (Momentum Contrast) used a momentum-updated encoder and memory bank for efficient contrastive learning \citep{he2020moco, chen2020mocov2}.
+DINO applied self-distillation to Vision Transformers, learning powerful features without labels \citep{caron2021dino}. DINOv2 scaled this approach to larger datasets, learning visual features that generalize across tasks \citep{oquab2023dinov2}. Masked Autoencoders (MAE) learn by reconstructing masked patches \citep{he2022mae}, while BEiT introduced vision tokenization \citep{bao2021beit}. These methods have proven particularly effective for medical imaging where labeled data is scarce \citep{azizi2021big, sowrirajan2021moco, ciga2022self, chen2019self}.
 
-\subsubsection{Self-Distillation Methods}
-BYOL (Bootstrap Your Own Latent) demonstrated that contrastive learning could work without negative samples through momentum-based self-distillation \citep{grill2020byol}. SimSiam simplified this further by removing the momentum encoder \citep{chen2021simsiam}.
+\subsection{Comparison with Related Work}
 
-\subsubsection{Vision Transformers for Self-Supervised Learning}
-DINO (self-DIstillation with NO labels) applied self-distillation to Vision Transformers, achieving impressive results without using any labels \citep{caron2021dino}. DINOv2 scaled this approach to larger datasets and models, learning powerful visual features that generalize across tasks \citep{oquab2023dinov2}. These features have proven particularly effective for transfer learning to specialized domains including medical imaging \citep{azizi2021big}.
+Table \ref{tab:literature_comparison} compares our work with related studies in medical image detection and semi/self-supervised learning.
 
-\subsubsection{Masked Image Modeling}
-Masked Autoencoders (MAE) learn representations by reconstructing masked image patches, inspired by masked language modeling in NLP \citep{he2022mae}. BEiT introduced vision tokenization for masked prediction \citep{bao2021beit}.
+\begin{table}[htbp]
+\centering
+\caption{Comparison with Related Work on Medical Image Detection}
+\label{tab:literature_comparison}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}p{2.5cm}p{1.8cm}p{2.2cm}p{1.5cm}p{2.8cm}@{}}
+\toprule
+\textbf{Study} & \textbf{Data} & \textbf{Method} & \textbf{Perf.} & \textbf{Contribution} \\
+\midrule
+Havaei et al. \citep{havaei2017brain} & MRI & CNN Seg. & -- & Two-path CNN \\
+Swati et al. \citep{swati2019brain} & MRI & VGG16 TL & 94.8\% & ImageNet TL \\
+Deepak \citep{deepak2019brain} & MRI & GoogLeNet & 98.0\% & Deep TL \\
+Liu et al. \citep{liu2021unbiased} & COCO & Unb. Teacher & 34.9\% & Focal loss \\
+Sohn et al. \citep{sohn2020simple} & COCO & STAC & 28.6\% & Strong aug. \\
+Azizi et al. \citep{azizi2021big} & Medical & SimCLR & +5\% & Self-sup. \\
+\midrule
+\textbf{Ours} & MRI & DINO+YOLO & \textbf{94.08\%} & SSL+Det. \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\subsection{Self-Supervised Learning in Medical Imaging}
-
-Self-supervised learning has shown particular promise in medical imaging where labeled data is scarce. Contrastive learning methods have been adapted for chest X-rays \citep{sowrirajan2021moco}, histopathology \citep{ciga2022self}, and radiology \citep{azizi2021big}. These methods often outperform ImageNet pretraining when transferred to medical tasks \citep{chen2019self}.
-
-\subsection{Gap Analysis and Contributions}
-
-While previous works have explored semi-supervised and self-supervised learning separately, few studies have systematically compared these approaches for medical object detection. This project addresses this gap by:
-
-\begin{enumerate}
-    \item Providing a comprehensive comparison of baseline supervised detectors (YOLOv10/11/12) on brain MRI data
-    \item Implementing and evaluating pseudo-labeling for semi-supervised detection
-    \item Comparing two distinct self-supervised paradigms (contrastive vs. self-distillation)
-    \item Demonstrating the effectiveness of DINOv3 features for medical object detection
-\end{enumerate}
+Our work differs from prior studies by: (1) systematically comparing supervised, semi-supervised, and self-supervised paradigms on the same dataset; (2) demonstrating that DINOv3 features integrated with modern YOLO detectors outperform fully supervised baselines; and (3) providing practical insights for label-efficient medical imaging applications.
