@@ -1,0 +1,54 @@
+% ============================================================================
+% INTRODUCTION
+% ============================================================================
+\section{Introduction}
+\label{sec:introduction}
+
+\subsection{Background and Motivation}
+
+Medical imaging plays a pivotal role in modern healthcare, enabling clinicians to diagnose and monitor various pathological conditions non-invasively. Brain Magnetic Resonance Imaging (MRI) is particularly valuable for detecting tumors, fluid collections, and other anomalies within the central nervous system \citep{litjens2017survey}. However, manual interpretation of brain MRI scans is time-consuming, requires specialized expertise, and is subject to inter-observer variability \citep{esteva2019guide}.
+
+Deep learning-based object detection has emerged as a powerful tool for automating the identification and localization of abnormalities in medical images \citep{shen2017deep}. Object detection models can accurately identify Regions of Interest (ROIs), draw bounding boxes around lesions, and classify pathologies, thereby assisting radiologists in their diagnostic workflow \citep{rajpurkar2017chexnet}.
+
+\subsection{The Challenge of Limited Labeled Data}
+
+A significant bottleneck in applying deep learning to medical imaging is the scarcity of labeled data. Annotating medical images requires domain expertise and is both expensive and time-consuming \citep{tajbakhsh2020embracing}. This constraint motivates the exploration of label-efficient learning paradigms:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{Semi-Supervised Learning (SSL):} Leverages both labeled and unlabeled data to improve model performance by generating pseudo-labels for unlabeled samples \citep{sohn2020fixmatch}.
+    \item \textbf{Self-Supervised Learning (Self-SL):} Learns meaningful representations from unlabeled data through pretext tasks, enabling effective transfer to downstream tasks with minimal labeled data \citep{chen2020simclr}.
+\end{itemize}
+
+\subsection{Project Objectives}
+
+This project aims to systematically evaluate and compare different learning paradigms for brain MRI object detection:
+
+\begin{enumerate}
+    \item \textbf{Supervised Learning:} Train and compare YOLO architectures 
+    (YOLOv10, YOLOv11, YOLOv12) using fully labeled data for baselines.
+    
+    \item \textbf{Semi-Supervised Detection:} Implement pseudo-labeling with 
+    teacher-student framework using 20\% labeled data.
+    
+    \item \textbf{Self-Supervised Learning:} Implement SimCLR and DINOv3 
+    for feature learning, followed by fine-tuning for detection.
+    
+    \item \textbf{Comprehensive Analysis:} Compare all paradigms to identify 
+    the most effective strategy for brain MRI detection.
+\end{enumerate}
+
+\subsection{Dataset Overview}
+
+The experiments utilize a Brain MRI object detection dataset comprising approximately 1,200 images with three pathological classes:
+
+\begin{itemize}[noitemsep]
+    \item \textbf{CCT (Cerebral Cortex Tumor):} Tumorous masses in the cerebral cortex
+    \item \textbf{IFC (Intracerebral Fluid Collection):} Abnormal fluid accumulations
+    \item \textbf{UAS (Unidentified Anomaly Signature):} Other anomalies requiring attention
+\end{itemize}
+
+The dataset exhibits relatively balanced class distribution (approximately 35\%, 33\%, and 32\% respectively), following an 80/10/10 train/validation/test split.
+
+\subsection{Report Organization}
+
+The remainder of this report is organized as follows: Section \ref{sec:literature} reviews related work in object detection and label-efficient learning. Section \ref{sec:methodology} describes the dataset, model architectures, and training methodologies. Section \ref{sec:experimental_setup} details the experimental configuration. Section \ref{sec:results} presents quantitative and qualitative results. Section \ref{sec:discussion} provides comparative analysis and insights. Section \ref{sec:conclusion} concludes with key findings and future directions.

@@ -1,0 +1,211 @@
+% ============================================================================
+% EXPERIMENTAL SETUP
+% ============================================================================
+\section{Experimental Setup}
+\label{sec:experimental_setup}
+
+This section details the computational environment, training configurations, and experimental protocols used in this project.
+
+\subsection{Computational Environment}
+
+All experiments were conducted using cloud-based GPU computing resources:
+
+\begin{table}[H]
+\centering
+\caption{Computational Environment}
+\label{tab:compute_env}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Resource} & \textbf{Specification} \\
+\midrule
+Platform & Kaggle Notebooks \\
+GPU & NVIDIA Tesla P100 (16 GB) \\
+CPU & Intel Xeon (4 cores) \\
+RAM & 16 GB \\
+Framework & PyTorch 2.0+ \\
+YOLO Implementation & Ultralytics \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Experiment Groups}
+
+The experiments were organized into three main groups corresponding to the project objectives:
+
+\subsubsection{Experiment Group 1: Supervised Learning Baseline}
+
+\begin{table}[H]
+\centering
+\caption{Baseline Experiment Configuration}
+\label{tab:baseline_config}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Model} & \textbf{Epochs} & \textbf{Batch Size} & \textbf{Learning Rate} \\
+\midrule
+YOLOv10n & 100 & 16 & 0.01 \\
+YOLOv11n & 100 & 16 & 0.01 \\
+YOLOv12n & 100 & 16 & 0.01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Data Augmentation} (applied during training):
+\begin{itemize}[noitemsep]
+    \item Mosaic augmentation
+    \item Random HSV shifts
+    \item Random horizontal/vertical flips
+    \item Random scaling and translation
+\end{itemize}
+
+\subsubsection{Experiment Group 2: Semi-Supervised Object Detection}
+
+\begin{table}[H]
+\centering
+\caption{Semi-Supervised Experiment Configuration}
+\label{tab:ssod_config}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{c}{\textit{Teacher Model}} \\
+\midrule
+Base Architecture & YOLOv12 \\
+Training Data & Labeled only (20\%) \\
+Epochs & 100 \\
+\midrule
+\multicolumn{2}{c}{\textit{Pseudo-Label Generation}} \\
+\midrule
+Confidence Threshold ($\tau$) & 0.70 \\
+NMS IoU Threshold & 0.45 \\
+\midrule
+\multicolumn{2}{c}{\textit{Student Model}} \\
+\midrule
+Base Architecture & YOLOv12 \\
+Training Data & Labeled + Pseudo-labeled \\
+Epochs & 100 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Experiment Group 3: Self-Supervised Learning}
+
+\paragraph{SimCLR Pretraining Configuration}
+
+\begin{table}[H]
+\centering
+\caption{SimCLR Pretraining Configuration}
+\label{tab:simclr_pretrain}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Backbone & ResNet-18 \\
+Projection Dimension & 128 \\
+Temperature ($\tau$) & 0.07 \\
+Batch Size & 32 \\
+Epochs & 100 \\
+Optimizer & Adam \\
+Learning Rate & 0.001 \\
+LR Schedule & Cosine annealing \\
+Weight Decay & 1e-4 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{SimCLR Fine-tuning Configuration}
+
+\begin{table}[H]
+\centering
+\caption{SimCLR Fine-tuning Configuration}
+\label{tab:simclr_finetune}
+\begin{tabular}{@{}lll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Linear Eval} & \textbf{Full Fine-tune} \\
+\midrule
+Encoder & Frozen & Trainable \\
+Classifier & 512 $\rightarrow$ 3 & 512 $\rightarrow$ 3 \\
+Epochs & 50 & 50 \\
+Batch Size & 32 & 32 \\
+Learning Rate & 0.01 & 0.001 \\
+Optimizer & SGD & Adam \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{DINOv3 Configuration}
+
+\begin{table}[H]
+\centering
+\caption{DINOv3 Feature Extraction and Classification}
+\label{tab:dino_config}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+\multicolumn{2}{c}{\textit{Feature Extraction}} \\
+\midrule
+Pretrained Model & DINOv3 ViT-B/16 \\
+Feature Dimension & 768 \\
+Source & Facebook AI Research \\
+\midrule
+\multicolumn{2}{c}{\textit{MLP Classifier}} \\
+\midrule
+Architecture & 768 $\rightarrow$ 256 $\rightarrow$ 128 $\rightarrow$ 3 \\
+Activation & ReLU \\
+Dropout & 0.3 \\
+Epochs & 100 \\
+Learning Rate & 0.001 \\
+Optimizer & Adam \\
+\midrule
+\multicolumn{2}{c}{\textit{YOLO Integration}} \\
+\midrule
+Base Model & YOLOv12 \\
+Training Epochs & 20 \\
+Batch Size & 16 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Training Procedures}
+
+\subsubsection{Loss Functions}
+
+\paragraph{Object Detection Loss (YOLO)}
+The YOLO models use a composite loss function:
+\begin{equation}
+\mathcal{L}_{\text{YOLO}} = \lambda_{\text{box}} \mathcal{L}_{\text{box}} + \lambda_{\text{cls}} \mathcal{L}_{\text{cls}} + \lambda_{\text{obj}} \mathcal{L}_{\text{obj}}
+\end{equation}
+where $\mathcal{L}_{\text{box}}$ is the CIoU loss for bounding box regression, $\mathcal{L}_{\text{cls}}$ is the classification loss, and $\mathcal{L}_{\text{obj}}$ is the objectness loss.
+
+\paragraph{Contrastive Loss (SimCLR)}
+NT-Xent loss as described in Section \ref{sec:methodology}.
+
+\paragraph{Classification Loss (DINOv3 MLP)}
+Cross-entropy loss for multi-class classification:
+\begin{equation}
+\mathcal{L}_{\text{CE}} = -\sum_{c=1}^{C} y_c \log(\hat{y}_c)
+\end{equation}
+
+\subsubsection{Early Stopping and Checkpointing}
+
+All experiments employed the following strategies:
+\begin{itemize}
+    \item Model checkpointing based on best validation mAP
+    \item Early stopping with patience of 20 epochs
+    \item Learning rate reduction on plateau
+\end{itemize}
+
+\subsection{Evaluation Protocol}
+
+\begin{enumerate}
+    \item Train models according to specified configurations
+    \item Evaluate on validation set for hyperparameter selection
+    \item Report final metrics on held-out test set
+    \item Generate visualizations including:
+    \begin{itemize}
+        \item Training curves (loss, mAP evolution)
+        \item Confusion matrices
+        \item Precision-Recall curves
+        \item Sample detection outputs
+    \end{itemize}
+\end{enumerate}

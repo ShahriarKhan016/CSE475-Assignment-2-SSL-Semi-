@@ -1,0 +1,56 @@
+% ============================================================================
+% TITLE PAGE AND ABSTRACT
+% ============================================================================
+
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+    
+    {\Large\bfseries Department of Computer Science and Engineering}\\[0.3cm]
+    {\large East West University}\\[0.5cm]
+    {\normalsize Dhaka, Bangladesh}\\[1cm]
+    
+    \rule{\textwidth}{1.5pt}\\[0.5cm]
+    {\LARGE\bfseries Semi-Supervised and Self-Supervised Learning\\[0.3cm]
+    for Brain MRI Object Detection}\\[0.3cm]
+    \rule{\textwidth}{1.5pt}\\[1.5cm]
+    
+    {\Large\bfseries CSE 475: Machine Learning}\\[0.3cm]
+    {\large Final Project Report}\\[2cm]
+    
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        {\large\bfseries Prepared by:}\\[0.5cm]
+        \begin{tabular}{ll}
+            {\large Shahriar Khan} & {\normalsize ID: 2022-3-60-016}\\[0.3cm]
+            {\large Tanvir Rahman} & {\normalsize ID: 2022-3-60-134}\\[0.3cm]
+            {\large Khalid Mahmud Joy} & {\normalsize ID: 2022-3-60-159}\\[0.3cm]
+            {\large Rifah Tamanna} & {\normalsize ID: 2022-3-60-149}\\
+        \end{tabular}
+    \end{minipage}\\[2cm]
+    
+    {\large\bfseries Course Instructor:}\\[0.3cm]
+    {\large Rifat Rashid}\\[2cm]
+    
+    \vfill
+    
+    {\large December 2025}
+    
+\end{titlepage}
+
+% ============================================================================
+% ABSTRACT
+% ============================================================================
+\newpage
+\begin{abstract}
+\sloppy
+\noindent
+This project presents a comprehensive study on object detection for Brain MRI images, comparing supervised, semi-supervised, and self-supervised learning paradigms using a dataset of approximately 1,200 scans with three pathological classes: Cerebral Cortex Tumor (CCT), Intracerebral Fluid Collection (IFC), and Unidentified Anomaly Signature (UAS). For the supervised baseline, we evaluated YOLOv10n, YOLOv11n, and YOLOv12n architectures, with YOLOv12n achieving 88.54\% mAP@0.5 and 81.31\% F1-score. In semi-supervised learning, we implemented pseudo-labeling using a teacher-student framework with 20\% labeled data, where the teacher achieved 81.84\% mAP@0.5 and the student reached 73.66\%. For self-supervised learning, we implemented SimCLR (achieving 90.31\% classification accuracy) and DINOv3 with Vision Transformers (achieving 89.45\% accuracy). When integrated with YOLOv12, the DINOv3-enhanced model achieved the best overall performance of \textbf{94.08\% mAP@0.5}, surpassing the supervised baseline by 5.54\%. Our findings demonstrate that self-supervised pretraining with transformer architectures significantly enhances medical image detection, offering a promising direction for label-efficient learning in medical imaging.
+
+\vspace{0.5cm}
+\noindent\textbf{Keywords:} Object Detection, Brain MRI, Semi-Supervised Learning, Self-Supervised Learning, YOLO, SimCLR, DINOv3, Pseudo-Labeling, Medical Imaging
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage

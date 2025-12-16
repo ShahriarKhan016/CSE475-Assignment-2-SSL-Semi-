@@ -1,0 +1,138 @@
+% ============================================================================
+% DISCUSSION
+% ============================================================================
+\section{Discussion}
+\label{sec:discussion}
+
+This section provides a comprehensive analysis of the experimental results, comparing the different learning paradigms and discussing their implications for medical image object detection.
+
+\subsection{Baseline Model Analysis}
+
+The progression from YOLOv10n to YOLOv12n demonstrated consistent improvements in detection performance. YOLOv12n's superior performance (88.54\% mAP@0.5 vs. 81.36\% for YOLOv10n) can be attributed to several architectural advancements:
+
+\begin{itemize}
+    \item \textbf{Attention Mechanisms:} YOLOv12 incorporates transformer-like attention modules that better capture long-range dependencies in medical images.
+    \item \textbf{Improved Feature Aggregation:} Enhanced neck architectures facilitate better multi-scale feature fusion.
+    \item \textbf{Refined Detection Heads:} More sophisticated prediction heads improve localization precision.
+\end{itemize}
+
+The relatively high performance across all models (>80\% mAP@0.5) suggests that modern YOLO architectures are well-suited for brain MRI pathology detection, even without domain-specific modifications.
+
+\subsection{Semi-Supervised Learning Analysis}
+
+\subsubsection{Teacher Model Performance}
+
+The teacher model trained on only 20\% labeled data achieved 81.84\% mAP@0.5, representing an 11.2\% performance drop from the full baseline (93.04\%). This performance gap is expected given the significant reduction in labeled training data.
+
+\subsubsection{Student Model Underperformance}
+
+Contrary to expectations, the student model trained on pseudo-labeled data performed worse than the teacher (73.66\% vs. 81.84\%). This unexpected result can be attributed to several factors:
+
+\begin{enumerate}
+    \item \textbf{Pseudo-Label Noise Accumulation:} Despite the 0.70 confidence threshold, noisy pseudo-labels may have introduced erroneous supervision signals.
+    
+    \item \textbf{Class Imbalance in Pseudo-Labels:} The pseudo-labeling process may have disproportionately generated labels for easier classes, creating training imbalance.
+    
+    \item \textbf{Confirmation Bias:} The student may have reinforced teacher errors rather than correcting them.
+    
+    \item \textbf{Distribution Shift:} Images that received confident pseudo-labels may not represent the full data distribution.
+\end{enumerate}
+
+\subsubsection{Implications for SSL in Medical Imaging}
+
+These results highlight the challenges of applying simple pseudo-labeling to medical imaging. More sophisticated approaches such as Unbiased Teacher \citep{liu2021unbiased} or curriculum-based pseudo-labeling may be necessary to achieve positive transfer from unlabeled data.
+
+\subsection{Self-Supervised Learning Analysis}
+
+\subsubsection{SimCLR: Contrastive Learning}
+
+The linear evaluation accuracy of 58.59\% demonstrates that SimCLR learns task-relevant representations during contrastive pretraining. However, these representations are not directly sufficient for high-accuracy classification without fine-tuning.
+
+The dramatic improvement to 90.31\% after full fine-tuning validates the transfer learning paradigm: self-supervised pretraining provides a better initialization than random weights, enabling faster convergence and better final performance.
+
+\subsubsection{DINOv3: Self-Distillation with Vision Transformers}
+
+DINOv3 features exhibited several remarkable properties:
+
+\begin{enumerate}
+    \item \textbf{Strong Zero-Shot Clustering:} Even without any task-specific training, t-SNE visualizations showed clear class separation, indicating that DINOv3's pretrained features capture semantically meaningful distinctions in brain MRI images.
+    
+    \item \textbf{High Linear Probe Accuracy:} The 85.23\% linear evaluation accuracy significantly outperforms SimCLR (58.59\%), suggesting that transformer-based self-supervised learning produces more linearly separable features.
+    
+    \item \textbf{Effective Transfer to Detection:} When integrated with YOLOv12, DINOv3 features enabled the model to achieve 94.08\% mAP@0.5---surpassing even the fully supervised baseline trained on 100\% labeled data.
+\end{enumerate}
+
+\subsection{Comparative Analysis}
+
+\subsubsection{Best Overall Performance}
+
+The DINOv3 + YOLOv12 combination achieved the highest detection performance (94.08\% mAP@0.5), outperforming:
+
+\begin{itemize}
+    \item Baseline YOLOv12n by 5.54\% absolute (88.54\% $\rightarrow$ 94.08\%)
+    \item SSOD Baseline by 1.04\% absolute (93.04\% $\rightarrow$ 94.08\%)
+    \item Teacher model by 12.24\% absolute (81.84\% $\rightarrow$ 94.08\%)
+    \item Student model by 20.42\% absolute (73.66\% $\rightarrow$ 94.08\%)
+\end{itemize}
+
+\subsubsection{Label Efficiency}
+
+The results demonstrate that self-supervised pretraining can effectively leverage unlabeled data to improve detection performance. DINOv3's pretraining on 1.7 billion diverse images provides robust visual representations that transfer well to the specialized medical imaging domain.
+
+\subsubsection{Computational Considerations}
+
+\begin{table}[H]
+\centering
+\caption{Computational Comparison of Methods}
+\label{tab:compute_comparison}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Method} & \textbf{Pretraining Cost} & \textbf{Fine-tuning Cost} & \textbf{Labeled Data} \\
+\midrule
+Baseline (YOLO) & None & 100 epochs & 100\% \\
+SSOD & None & 200 epochs total & 20\% \\
+SimCLR + YOLO & 100 epochs (unsupervised) & 50 epochs & 100\% \\
+DINOv3 + YOLO & Pretrained (external) & 20 epochs & 100\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+DINOv3's advantage includes the use of publicly available pretrained weights, eliminating the need for expensive self-supervised pretraining on the target domain.
+
+\subsection{Lessons Learned}
+
+\begin{enumerate}
+    \item \textbf{Pretrained Transformers Excel:} Vision Transformer models pretrained with self-distillation (DINOv3) provide superior features for medical imaging compared to CNN-based contrastive learning (SimCLR).
+    
+    \item \textbf{Simple SSL Has Limitations:} Naive pseudo-labeling without additional regularization or filtering mechanisms can harm rather than help performance.
+    
+    \item \textbf{Transfer Learning is Powerful:} Leveraging large-scale pretrained models (even from non-medical domains) can outperform fully supervised training on domain-specific data.
+    
+    \item \textbf{Architecture Matters:} Progressive improvements in YOLO architectures translate directly to better detection performance in medical imaging.
+\end{enumerate}
+
+\subsection{Limitations}
+
+\begin{itemize}
+    \item \textbf{Dataset Size:} The relatively small dataset ($\sim$1,200 images) may limit the generalizability of conclusions.
+    
+    \item \textbf{Single Domain:} Results are specific to brain MRI pathology detection and may not generalize to other medical imaging modalities.
+    
+    \item \textbf{Pseudo-Label Implementation:} Only one SSL method (simple pseudo-labeling) was evaluated; more sophisticated approaches may yield better results.
+    
+    \item \textbf{Computational Resources:} Experiments were limited by Kaggle GPU quotas, potentially affecting hyperparameter optimization.
+\end{itemize}
+
+\subsection{Practical Implications}
+
+For practitioners seeking to deploy object detection in medical imaging with limited labeled data:
+
+\begin{enumerate}
+    \item \textbf{Start with Pretrained Transformers:} DINOv3-style pretrained models offer the best out-of-the-box performance for transfer learning.
+    
+    \item \textbf{Use Modern Detection Architectures:} YOLOv12 provides an excellent balance of accuracy and efficiency for real-time medical image analysis.
+    
+    \item \textbf{Be Cautious with Simple SSL:} Pseudo-labeling requires careful implementation with robust filtering and confidence calibration.
+    
+    \item \textbf{Combine Approaches:} Integrating self-supervised features with supervised detection yields the best results.
+\end{enumerate}

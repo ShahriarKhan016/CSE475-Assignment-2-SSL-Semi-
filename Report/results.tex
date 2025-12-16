@@ -1,0 +1,361 @@
+% ============================================================================
+% RESULTS
+% ============================================================================
+\section{Results}
+\label{sec:results}
+
+This section presents the experimental results from all three learning paradigms: baseline supervised learning, semi-supervised learning, and self-supervised learning.
+
+\subsection{Supervised Learning Baseline Results}
+
+\subsubsection{Model Comparison}
+
+Three YOLO architectures were evaluated on the full labeled dataset. Table \ref{tab:baseline_results} summarizes the test set performance.
+
+\begin{table}[H]
+\centering
+\caption{Supervised Learning Baseline Performance Comparison}
+\label{tab:baseline_results}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Model} & \textbf{mAP@0.5} & \textbf{mAP@0.5:0.95} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\
+\midrule
+YOLOv10n & 0.8136 & 0.5539 & 0.7936 & 0.6782 & 0.7314 \\
+YOLOv11n & 0.8447 & 0.5829 & 0.7244 & 0.8048 & 0.7625 \\
+\textbf{YOLOv12n} & \textbf{0.8854} & \textbf{0.6032} & \textbf{0.8320} & 0.7950 & \textbf{0.8131} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item YOLOv12n achieved the best overall performance with mAP@0.5 of 88.54\%.
+    \item Progressive improvements from v10 to v12, with 7.2\% gain in mAP@0.5.
+    \item YOLOv12n showed best precision-recall balance with F1 score of 81.31\%.
+\end{itemize}
+
+\subsubsection{Training Curves}
+
+Figure \ref{fig:yolov12_training} shows the training progress of the best-performing YOLOv12n model.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{assignment1/yolov12_results.png}
+    \caption{YOLOv12n training curves showing loss components (box, classification, objectness) and mAP progression over 100 epochs. The model shows stable convergence with consistent improvement in detection metrics.}
+    \label{fig:yolov12_training}
+\end{figure}
+
+\subsubsection{Confusion Matrix Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{assignment1/yolov12_confusion_matrix_normalized.png}
+    \caption{Normalized confusion matrix for YOLOv12n baseline model showing per-class detection accuracy. High diagonal values indicate strong class discrimination.}
+    \label{fig:yolov12_confusion}
+\end{figure}
+
+\subsubsection{Precision-Recall Curves}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{assignment1/yolov12_BoxPR_curve.png}
+    \caption{Precision-Recall curves for YOLOv12n across all three classes, demonstrating high area under the curve for each pathology type.}
+    \label{fig:yolov12_pr}
+\end{figure}
+
+\subsection{Semi-Supervised Learning Results}
+
+\subsubsection{Teacher-Student Performance}
+
+Table \ref{tab:ssod_results} compares the semi-supervised detection results against the baseline.
+
+\begin{table}[H]
+\centering
+\caption{Semi-Supervised Object Detection Results}
+\label{tab:ssod_results}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Model} & \textbf{mAP@50} & \textbf{mAP@50-95} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\midrule
+Baseline (100\% Data) & 93.04\% & 64.59\% & 84.66\% & 86.55\% & 85.59\% \\
+Teacher (20\% Data) & 81.84\% & 53.92\% & 72.11\% & 79.34\% & 75.55\% \\
+Student (Pseudo-Label) & 73.66\% & 49.55\% & 71.19\% & 69.08\% & 70.12\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item The teacher model trained on 20\% labeled data achieved 81.84\% mAP@50, a 11.2\% drop from the full baseline.
+    \item Unexpectedly, the student model trained on pseudo-labels performed worse (73.66\%) than the teacher.
+    \item This suggests pseudo-label noise propagation and the need for more sophisticated SSL techniques.
+\end{itemize}
+
+\subsubsection{Model Comparison Visualization}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{assignment2/ssod/model_comparison.png}
+    \caption{Comparison of Teacher vs Student model performance in the semi-supervised learning framework.}
+    \label{fig:ssod_comparison}
+\end{figure}
+
+\subsubsection{Pseudo-Label Quality Analysis}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{assignment2/ssod/pseudo_label_analysis.png}
+    \caption{Analysis of pseudo-label quality showing confidence distribution and detection coverage on unlabeled data.}
+    \label{fig:pseudo_analysis}
+\end{figure}
+
+\subsubsection{Baseline Training Curves}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{assignment2/ssod/baseline_results.png}
+    \caption{Training curves for the SSOD baseline model (100\% labeled data) showing loss components and mAP evolution.}
+    \label{fig:ssod_baseline_training}
+\end{figure}
+
+\subsection{Self-Supervised Learning Results}
+
+\subsubsection{SimCLR Results}
+
+\paragraph{Pretraining Phase}
+
+Figure \ref{fig:simclr_training} shows the contrastive loss progression during SimCLR pretraining.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{assignment2/simclr/simclr_training_curves.png}
+    \caption{SimCLR contrastive loss (NT-Xent) over 100 pretraining epochs. The decreasing loss indicates the model is learning to distinguish between different images while clustering augmented views of the same image.}
+    \label{fig:simclr_training}
+\end{figure}
+
+\paragraph{Classification Performance}
+
+Table \ref{tab:simclr_results} compares linear evaluation and full fine-tuning performance on the classification task.
+
+\begin{table}[H]
+\centering
+\caption{SimCLR Classification Performance}
+\label{tab:simclr_results}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Protocol} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\midrule
+Linear Evaluation & 58.59\% & 56.81\% & 58.59\% & 54.60\% \\
+\textbf{Full Fine-tuning} & \textbf{90.31\%} & \textbf{90.33\%} & \textbf{90.31\%} & \textbf{90.31\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Key Observations:}
+\begin{itemize}
+    \item Linear evaluation achieves modest 58.59\% accuracy, indicating learned features have some task-relevant information.
+    \item Full fine-tuning dramatically improves performance to 90.31\%, demonstrating effective transfer learning.
+    \item The 31.7\% gap highlights the importance of task-specific adaptation.
+\end{itemize}
+
+\paragraph{Feature Space Visualization}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{assignment2/simclr/simclr_tsne.png}
+    \caption{t-SNE visualization of SimCLR features after full fine-tuning, showing clear separation between the three brain pathology classes.}
+    \label{fig:simclr_tsne}
+\end{figure}
+
+\paragraph{Confusion Matrix Comparison}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{assignment2/simclr/simclr_confusion_matrices.png}
+    \caption{Confusion matrices comparing Linear Evaluation (left) versus Full Fine-tuning (right). Full fine-tuning achieves near-diagonal matrices indicating high classification accuracy.}
+    \label{fig:simclr_confusion}
+\end{figure}
+
+\paragraph{Per-Class Performance}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{assignment2/simclr/simclr_per_class_metrics.png}
+    \caption{Per-class precision, recall, and F1-score for SimCLR classification, showing balanced performance across all three pathology classes.}
+    \label{fig:simclr_per_class}
+\end{figure}
+
+\paragraph{SimCLR + YOLO Object Detection}
+
+The pretrained SimCLR backbone was integrated with YOLOv12 for object detection tasks.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assignment2/simclr_yolo_predictions.png}
+    \caption{SimCLR + YOLOv12 detection results showing bounding box predictions with class labels and detection counts.}
+    \label{fig:simclr_yolo_predictions}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{assignment2/simclr_yolo_analysis.png}
+    \caption{SimCLR + YOLO training curves and confusion matrix. The model demonstrates good convergence and balanced detection across classes.}
+    \label{fig:simclr_yolo_analysis}
+\end{figure}
+
+\subsubsection{DINOv3 Results}
+
+\paragraph{Feature Quality}
+
+DINOv3 features demonstrated strong clustering properties even without any fine-tuning on the target dataset.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{assignment2/dinov3/dinov3_tsne_visualization.png}
+        \caption{t-SNE visualization}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth}
+        \includegraphics[width=\textwidth]{assignment2/dinov3/dinov3_pca_visualization.png}
+        \caption{PCA visualization}
+    \end{subfigure}
+    \caption{Dimensionality reduction visualizations of DINOv3 features showing natural clustering of brain pathology classes without any task-specific training.}
+    \label{fig:dino_features}
+\end{figure}
+
+\paragraph{Classification Performance Comparison}
+
+Table \ref{tab:dino_classifiers} compares different classifier architectures on DINOv3 features.
+
+\begin{table}[H]
+\centering
+\caption{DINOv3 Classification with Different Classifiers}
+\label{tab:dino_classifiers}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Classifier} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
+\midrule
+Linear (Logistic Regression) & 85.23\% & -- & -- & -- \\
+k-NN ($k=5$) & 82.67\% & -- & -- & -- \\
+\textbf{MLP Classifier} & \textbf{89.45\%} & \textbf{89.50\%} & \textbf{89.45\%} & \textbf{89.47\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.65\textwidth]{assignment2/dinov3/dinov3_accuracy_comparison.png}
+    \caption{Accuracy comparison across different classifier types using DINOv3 frozen features.}
+    \label{fig:dino_accuracy}
+\end{figure}
+
+\paragraph{MLP Training Curves}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{assignment2/dinov3/dinov3_mlp_training_curves.png}
+    \caption{Training and validation curves for the MLP classifier on DINOv3 features, showing stable convergence.}
+    \label{fig:dino_mlp_training}
+\end{figure}
+
+\paragraph{Classification Confusion Matrix}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{assignment2/dinov3/dinov3_confusion_matrices.png}
+    \caption{Confusion matrix for DINOv3 + MLP classification showing high accuracy across all classes.}
+    \label{fig:dino_confusion}
+\end{figure}
+
+\subsubsection{DINOv3 + YOLO Object Detection}
+
+The DINOv3 features were integrated with YOLOv12 for object detection, achieving the \textbf{best overall performance}.
+
+\begin{table}[H]
+\centering
+\caption{DINOv3 + YOLOv12 Detection Performance (Best Model)}
+\label{tab:dino_yolo}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Metric} & \textbf{CCT} & \textbf{IFC} & \textbf{UAS} & \textbf{All Classes} \\
+\midrule
+AP@50 & 96.21\% & 92.45\% & 93.58\% & \textbf{94.08\%} \\
+AP@50-95 & -- & -- & -- & \textbf{67.73\%} \\
+Precision & -- & -- & -- & 86.33\% \\
+Recall & -- & -- & -- & 89.49\% \\
+F1-Score & -- & -- & -- & \textbf{87.88\%} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{assignment2/dinov3/dinov3_yolo_results.png}
+    \caption{DINOv3 + YOLOv12 training curves showing excellent convergence with mAP@50 reaching 94.08\%. This represents the best performing model across all experiments.}
+    \label{fig:dino_yolo_training}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.55\textwidth]{assignment2/dinov3/dinov3_yolo_confusion.png}
+    \caption{Normalized confusion matrix for DINOv3 + YOLO detection showing high accuracy across all three pathology classes.}
+    \label{fig:dino_yolo_confusion}
+\end{figure}
+
+\subsubsection{Detection Visualization}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assignment2/dinov3/dinov3_yolo_predictions.png}
+    \caption{Sample detection results from DINOv3 + YOLO showing accurate localization and classification of brain pathologies. Bounding boxes indicate detected regions with class labels and confidence scores.}
+    \label{fig:dino_yolo_predictions}
+\end{figure}
+
+\subsection{Comprehensive Comparison}
+
+Table \ref{tab:final_comparison} provides a comprehensive comparison of all models evaluated in this project.
+
+\begin{table}[H]
+\centering
+\caption{Comprehensive Model Comparison (All Experiments)}
+\label{tab:final_comparison}
+\begin{tabular}{@{}llccc@{}}
+\toprule
+\textbf{Learning Paradigm} & \textbf{Model} & \textbf{mAP@50} & \textbf{mAP@50-95} & \textbf{F1-Score} \\
+\midrule
+\multirow{3}{*}{Supervised} & YOLOv10n & 81.36\% & 55.39\% & 73.14\% \\
+                               & YOLOv11n & 84.47\% & 58.29\% & 76.25\% \\
+                               & YOLOv12n & 88.54\% & 60.32\% & 81.31\% \\
+\midrule
+\multirow{3}{*}{Semi-Supervised} & Baseline (100\%) & 93.04\% & 64.59\% & 85.59\% \\
+                           & Teacher (20\%) & 81.84\% & 53.92\% & 75.55\% \\
+                           & Student (Pseudo) & 73.66\% & 49.55\% & 70.12\% \\
+\midrule
+\multirow{2}{*}{Self-Supervised} & SimCLR + YOLO & 89.2\%$^*$ & -- & -- \\
+                              & \textbf{DINOv3 + YOLO} & \textbf{94.08\%} & \textbf{67.73\%} & \textbf{87.88\%} \\
+\bottomrule
+\multicolumn{5}{l}{\footnotesize $^*$Estimated from classification performance} \\
+\end{tabular}
+\end{table}
+
+\subsection{Per-Class Detection Performance}
+
+Table \ref{tab:per_class} compares per-class AP@50 across key models.
+
+\begin{table}[H]
+\centering
+\caption{Per-Class Detection Performance (AP@50)}
+\label{tab:per_class}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+\textbf{Class} & \textbf{Baseline} & \textbf{Teacher} & \textbf{Student} & \textbf{DINOv3+YOLO} \\
+\midrule
+CCT & 95.18\% & 77.37\% & 76.53\% & \textbf{96.21\%} \\
+IFC & 91.89\% & 76.30\% & 60.15\% & \textbf{92.45\%} \\
+UAS & 92.06\% & 91.85\% & 84.29\% & \textbf{93.58\%} \\
+\midrule
+\textbf{Mean} & 93.04\% & 81.84\% & 73.66\% & \textbf{94.08\%} \\
+\bottomrule
+\end{tabular}
+\end{table}

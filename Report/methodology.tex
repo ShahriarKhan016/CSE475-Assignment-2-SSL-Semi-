@@ -1,0 +1,254 @@
+% ============================================================================
+% METHODOLOGY
+% ============================================================================
+\section{Methodology}
+\label{sec:methodology}
+
+This section describes the dataset, model architectures, and training methodologies employed in this project.
+
+\subsection{Dataset}
+
+\subsubsection{Dataset Description}
+
+The experiments utilize a Brain MRI object detection dataset specifically curated for pathology detection\footnote{Dataset available at: \url{https://www.kaggle.com/datasets/turjo410/brain-mri-split-dataset}}. The dataset contains approximately 1,200 high-resolution MRI scans with expert annotations.
+
+\begin{table}[H]
+\centering
+\caption{Dataset Overview}
+\label{tab:dataset}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Attribute} & \textbf{Value} \\
+\midrule
+Total Images & $\sim$1,200 \\
+Image Format & JPEG/PNG \\
+Annotation Format & YOLO TXT \\
+Number of Classes & 3 \\
+Average Objects/Image & 1.2 \\
+Image Resolution & Variable (resized to 640$\times$640) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Class Definitions}
+
+The dataset includes three pathological classes, each representing a distinct type of brain abnormality:
+
+\begin{itemize}
+    \item \textbf{CCT (Cerebral Cortex Tumor):} Tumorous masses originating in or affecting the cerebral cortex, typically appearing as enhanced regions on contrast MRI.
+    
+    \item \textbf{IFC (Intracerebral Fluid Collection):} Abnormal accumulations of cerebrospinal fluid or other fluids within the brain parenchyma, often indicating pathological conditions.
+    
+    \item \textbf{UAS (Unidentified Anomaly Signature):} Other anomalies that require clinical attention but do not fall into the specific CCT or IFC categories.
+\end{itemize}
+
+\subsubsection{Class Distribution}
+
+The dataset exhibits a relatively balanced class distribution, which is beneficial for training unbiased models:
+
+\begin{table}[H]
+\centering
+\caption{Class Distribution}
+\label{tab:class_distribution}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Class} & \textbf{Instances} & \textbf{Percentage} & \textbf{Description} \\
+\midrule
+CCT & 423 & 35.2\% & Cerebral Cortex Tumor \\
+IFC & 394 & 32.8\% & Intracerebral Fluid Collection \\
+UAS & 384 & 32.0\% & Unidentified Anomaly Signature \\
+\midrule
+\textbf{Total} & \textbf{1,201} & \textbf{100\%} & \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Data Splitting}
+
+The dataset was split into training, validation, and test sets with the following ratios:
+
+\begin{table}[H]
+\centering
+\caption{Data Split Configuration}
+\label{tab:data_split}
+\begin{tabular}{@{}lccc@{}}
+\toprule
+\textbf{Split} & \textbf{Ratio} & \textbf{Images} & \textbf{Purpose} \\
+\midrule
+Train & 80\% & $\sim$960 & Model training \\
+Validation & 10\% & $\sim$120 & Hyperparameter tuning \\
+Test & 10\% & $\sim$120 & Final evaluation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For semi-supervised experiments, the training set was further divided:
+\begin{itemize}
+    \item \textbf{Labeled set (20\%):} $\sim$192 images with annotations
+    \item \textbf{Unlabeled set (80\%):} $\sim$768 images (labels withheld)
+\end{itemize}
+
+\subsection{Supervised Learning Baseline}
+
+\subsubsection{YOLO Architecture Family}
+
+We evaluated three state-of-the-art YOLO architectures for the baseline supervised experiments:
+
+\paragraph{YOLOv10n}
+YOLOv10 introduced consistent dual assignments for NMS-free training and an efficiency-accuracy driven model design. The nano variant (YOLOv10n) provides a lightweight architecture suitable for resource-constrained deployments while maintaining competitive accuracy.
+
+\paragraph{YOLOv11n}
+YOLOv11 improved upon YOLOv10 with enhanced feature aggregation and refined anchor-free detection heads. It introduced improved CSPNet backbone modifications and better gradient flow for training stability.
+
+\paragraph{YOLOv12n}
+YOLOv12 represents the latest evolution with attention-augmented detection heads and improved neck architecture. It incorporates transformer-like attention mechanisms while maintaining the efficiency hallmarks of the YOLO family.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{assignment1/model_comparison.png}
+    \caption{Baseline model comparison showing performance metrics for YOLOv10n, YOLOv11n, and YOLOv12n on the Brain MRI dataset.}
+    \label{fig:baseline_comparison}
+\end{figure}
+
+\subsection{Semi-Supervised Object Detection}
+
+\subsubsection{Pseudo-Labeling Framework}
+
+The semi-supervised object detection pipeline employs a teacher-student framework with pseudo-labeling:
+
+\begin{algorithm}[H]
+\caption{Pseudo-Labeling for Semi-Supervised Object Detection}
+\label{alg:pseudolabel}
+\begin{algorithmic}[1]
+\Require Labeled set $D_L$, Unlabeled set $D_U$, Confidence threshold $\tau$
+\State \textbf{Stage 1: Train Teacher Model}
+\State Train YOLOv12 on $D_L$ for 100 epochs $\rightarrow$ Teacher weights $W_T$
+\State \textbf{Stage 2: Generate Pseudo-Labels}
+\For{each image $x \in D_U$}
+    \State $\hat{y} \leftarrow \text{Teacher}(x)$
+    \If{$\text{confidence}(\hat{y}) \geq \tau$}
+        \State Add $(x, \hat{y})$ to pseudo-labeled set $D_P$
+    \EndIf
+\EndFor
+\State \textbf{Stage 3: Train Student Model}
+\State Train YOLOv12 on $D_L \cup D_P$ for 100 epochs $\rightarrow$ Student weights $W_S$
+\State \Return $W_S$
+\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Key Hyperparameters}
+
+\begin{table}[H]
+\centering
+\caption{Semi-Supervised Learning Configuration}
+\label{tab:ssl_config}
+\begin{tabular}{@{}ll@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} \\
+\midrule
+Base Model & YOLOv12 \\
+Labeled Data Ratio & 20\% \\
+Confidence Threshold ($\tau$) & 0.70 \\
+Teacher Training Epochs & 100 \\
+Student Training Epochs & 100 \\
+Batch Size & 16 \\
+Learning Rate & 0.01 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Self-Supervised Learning Methods}
+
+\subsubsection{SimCLR: Contrastive Learning}
+
+SimCLR (Simple Contrastive Learning of Representations) learns visual representations by maximizing agreement between differently augmented views of the same image.
+
+\paragraph{Architecture}
+\begin{itemize}
+    \item \textbf{Encoder:} ResNet-18 backbone
+    \item \textbf{Projection Head:} 2-layer MLP (2048 $\rightarrow$ 256 $\rightarrow$ 128)
+    \item \textbf{Output Dimension:} 128-dimensional embedding
+\end{itemize}
+
+\paragraph{Loss Function (NT-Xent)}
+The Normalized Temperature-scaled Cross Entropy loss for a positive pair $(i, j)$ is:
+
+\begin{equation}
+\mathcal{L}_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j)/\tau)}{\sum_{k=1}^{2N} \mathbf{1}_{[k \neq i]} \exp(\text{sim}(z_i, z_k)/\tau)}
+\end{equation}
+
+where $\text{sim}(u, v) = u^\top v / (\|u\| \|v\|)$ is cosine similarity and $\tau$ is the temperature parameter.
+
+\paragraph{Data Augmentation Pipeline}
+\begin{itemize}
+    \item Random resized crop (scale: 0.2--1.0)
+    \item Random horizontal flip
+    \item Color jittering (brightness, contrast, saturation, hue)
+    \item Random grayscale (probability: 0.2)
+    \item Gaussian blur
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{assignment2/simclr/simclr_augmentation_pairs.png}
+    \caption{SimCLR augmentation pairs showing different views of the same brain MRI image used for contrastive learning.}
+    \label{fig:simclr_augmentation}
+\end{figure}
+
+\subsubsection{DINOv3: Self-Distillation with Vision Transformers}
+
+DINOv3 employs self-distillation with Vision Transformers, learning powerful visual representations without any labels.
+
+\paragraph{Architecture}
+\begin{itemize}
+    \item \textbf{Backbone:} Vision Transformer ViT-B/16
+    \item \textbf{Parameters:} 86 million
+    \item \textbf{Feature Dimension:} 768
+    \item \textbf{Pretraining Data:} LVD-1689M (1.7 billion images)
+\end{itemize}
+
+\paragraph{Feature Extraction}
+DINOv3 extracts features using the [CLS] token representation from the final transformer layer. For an input image $x$:
+
+\begin{equation}
+\mathbf{f} = \text{DINOv3}(x)_{\text{[CLS]}} \in \mathbb{R}^{768}
+\end{equation}
+
+\paragraph{Downstream Classifiers}
+Three classification approaches were evaluated:
+\begin{itemize}
+    \item \textbf{Linear Classifier:} Logistic regression on frozen features
+    \item \textbf{k-NN Classifier:} $k$-nearest neighbors ($k=5$) in feature space
+    \item \textbf{MLP Classifier:} 768 $\rightarrow$ 256 $\rightarrow$ 128 $\rightarrow$ 3 with ReLU activation
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{assignment2/dinov3/dinov3_tsne_visualization.png}
+    \caption{t-SNE visualization of DINOv3 features showing natural clustering of brain MRI classes in the learned feature space.}
+    \label{fig:dino_tsne}
+\end{figure}
+
+\subsection{YOLO Integration for Object Detection}
+
+Both self-supervised methods were integrated with YOLOv12 for object detection:
+
+\begin{enumerate}
+    \item \textbf{Feature-Enhanced Training:} Self-supervised features used to enhance training data or initialize components.
+    
+    \item \textbf{Classification-Guided Detection:} Classification predictions used to improve detection confidence estimation.
+    
+    \item \textbf{Fine-tuning Pipeline:} Transfer learned representations to the detection task through fine-tuning on labeled data.
+\end{enumerate}
+
+\subsection{Evaluation Metrics}
+
+The following metrics were used to evaluate model performance:
+
+\begin{itemize}
+    \item \textbf{mAP@0.5:} Mean Average Precision at IoU threshold of 0.5
+    \item \textbf{mAP@0.5:0.95:} Mean Average Precision averaged over IoU thresholds from 0.5 to 0.95
+    \item \textbf{Precision:} Ratio of true positives to all positive predictions
+    \item \textbf{Recall:} Ratio of true positives to all actual positives
+    \item \textbf{F1-Score:} Harmonic mean of precision and recall
+\end{itemize}
